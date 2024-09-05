@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { getLastFlushTimestamp, getWALContents, getDiskWALContents, walEventEmitter } from '../utils/storageEngine';
+import { getLastFlushTimestamp, getWALContents, getDiskWALContents, walEventEmitter, getTimeUntilNextFlush } from '../utils/storageEngine';
 
 function WALComparison() {
   const [memoryWAL, setMemoryWAL] = useState('');
   const [diskWAL, setDiskWAL] = useState('');
-  const [timeUntilFlush, setTimeUntilFlush] = useState(10);
+  const [timeUntilFlush, setTimeUntilFlush] = useState(10000);
 
   useEffect(() => {
     const updateTimer = () => {
-      const lastFlush = getLastFlushTimestamp();
-      const timeSinceFlush = (Date.now() - lastFlush) / 1000;
-      const remainingTime = Math.max(0, 10 - timeSinceFlush);
-      setTimeUntilFlush(Math.round(remainingTime));
+      setTimeUntilFlush(getTimeUntilNextFlush());
     };
 
     const updateWAL = () => {
@@ -22,7 +19,7 @@ function WALComparison() {
     const timer = setInterval(() => {
       updateTimer();
       updateWAL();
-    }, 100); // Update more frequently for smoother countdown and WAL updates
+    }, 100); // Update more frequently for smoother countdown
 
     // Listen for flush events
     walEventEmitter.on('flush', updateWAL);
@@ -59,7 +56,7 @@ function WALComparison() {
     <div className="wal-comparison">
       <h2 className="text-2xl font-bold mb-4">WAL Comparison</h2>
       <div className="bg-yellow-100 p-4 rounded-lg mb-4">
-        <p className="font-semibold">Time until next WAL flush: {timeUntilFlush} seconds</p>
+        <p className="font-semibold">Time until next WAL flush: {Math.ceil(timeUntilFlush / 1000)} seconds</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>

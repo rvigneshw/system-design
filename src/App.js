@@ -6,7 +6,12 @@ import './App.css';
 const importAll = (r) => {
   return r.keys().reduce((acc, key) => {
     const name = key.replace(/^\.\/|\.js$/g, '');
-    acc[name] = r(key).default;
+    const component = r(key).default;
+    if (component) {
+      acc[name] = component;
+    } else {
+      console.warn(`No default export found for ${name}`);
+    }
     return acc;
   }, {});
 };
@@ -36,11 +41,13 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             {Object.entries(components).map(([name, Component]) => (
-              <Route 
-                key={name} 
-                path={`/${name.toLowerCase()}/*`} 
-                element={<Component />} 
-              />
+              Component && (
+                <Route 
+                  key={name} 
+                  path={`/${name.toLowerCase()}/*`} 
+                  element={<Component />} 
+                />
+              )
             ))}
           </Routes>
         </div>

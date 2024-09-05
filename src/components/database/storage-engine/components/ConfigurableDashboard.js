@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import MemoryVisualization from './MemoryVisualization';
 import WALVisualization from './WALVisualization';
 import WALComparison from './WALComparison';
@@ -12,28 +12,16 @@ const toggleableComponents = {
   OperationLog,
 };
 
-function ConfigurableDashboard() {
-  const [memoryState, setMemoryState] = useState({});
-  const [walContents, setWalContents] = useState([]);
-  const [operationLog, setOperationLog] = useState([]);
-  const [walFileHandle, setWalFileHandle] = useState(null);
+function ConfigurableDashboard({ memoryState, walContents, diskWalContents, onSubmit, operationLog = [] }) {
   const [activeComponents, setActiveComponents] = useState(['MemoryVisualization', 'WALComparison', 'OperationLog']);
 
-  const onSubmit = (key, value) => {
-    // Implement the logic to update memoryState, walContents, and operationLog
-    // This is a placeholder implementation
-    setMemoryState(prev => ({ ...prev, [key]: value }));
-    setWalContents(prev => [...prev, { key, value }]);
-    setOperationLog(prev => [...prev, `Added ${key}: ${value}`]);
-  };
-
-  const toggleComponent = (componentName) => {
+  const toggleComponent = useCallback((componentName) => {
     setActiveComponents(prev => 
       prev.includes(componentName)
         ? prev.filter(name => name !== componentName)
         : [...prev, componentName]
     );
-  };
+  }, []);
 
   return (
     <div className="w-full space-y-6">
@@ -65,8 +53,8 @@ function ConfigurableDashboard() {
                 <Component
                   memoryState={memoryState}
                   walContents={walContents}
+                  diskWalContents={diskWalContents}
                   log={operationLog}
-                  walFileHandle={walFileHandle}
                 />
               </div>
             </div>
@@ -77,4 +65,4 @@ function ConfigurableDashboard() {
   );
 }
 
-export default ConfigurableDashboard;
+export default React.memo(ConfigurableDashboard);

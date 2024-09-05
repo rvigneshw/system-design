@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, Link, Routes, useLocation } from 'react-router-dom';
-import ConfigurableDashboard from './database/storage-engine/components/ConfigurableDashboard';
+import StorageEngineSimulator from './database/storage-engine/components/StorageEngineSimulator';
 
 const components = {
-  StorageEngine: ConfigurableDashboard,
+  StorageEngine: StorageEngineSimulator,
 };
 
 function Database() {

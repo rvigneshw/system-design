@@ -1,7 +1,9 @@
 import React from 'react';
 
 function WALVisualization({ walContents }) {
-  const entries = walContents.split('\n').filter(entry => entry.trim() !== '');
+  const entries = Array.isArray(walContents) 
+    ? walContents 
+    : (typeof walContents === 'string' ? walContents.split('\n').filter(entry => entry.trim() !== '') : []);
 
   return (
     <div className="wal-visualization">
@@ -9,7 +11,7 @@ function WALVisualization({ walContents }) {
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {entries.map((entry, index) => {
           try {
-            const parsedEntry = JSON.parse(entry);
+            const parsedEntry = typeof entry === 'string' ? JSON.parse(entry) : entry;
             return (
               <div key={index} className="bg-gray-100 p-2 rounded break-words">
                 <span className="font-semibold mr-2">{parsedEntry.type}</span>
