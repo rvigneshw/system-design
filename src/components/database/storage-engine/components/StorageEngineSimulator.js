@@ -12,16 +12,11 @@ function StorageEngineSimulator() {
   const [error, setError] = useState(null);
   const [degree, setDegree] = useState(3);
 
-  const handleFileSelect = async (fileHandle) => {
-    try {
-      await initializeStorage(fileHandle, degree);
-      setIsInitialized(true);
-      setError(null);
-      updateState();
-    } catch (error) {
-      setError(`Error initializing storage: ${error.message}`);
-    }
-  };
+  const updateState = useCallback(() => {
+    setMemoryState(getMemoryState());
+    setWALContents(getWALContents());
+    setDiskWalContents(getDiskWALContents());
+  }, []);
 
   const handleSubmit = useCallback(async (key, value) => {
     console.log('handleSubmit called in StorageEngineSimulator', key, value);
@@ -33,13 +28,18 @@ function StorageEngineSimulator() {
       setOperationLog(prevLog => [...prevLog, `Error: ${error.message}`]);
       setError(error.message);
     }
-  }, []);
+  }, [updateState]);
 
-  const updateState = useCallback(() => {
-    setMemoryState(getMemoryState());
-    setWALContents(getWALContents());
-    setDiskWalContents(getDiskWALContents());
-  }, []);
+  const handleFileSelect = async (fileHandle) => {
+    try {
+      await initializeStorage(fileHandle, degree);
+      setIsInitialized(true);
+      setError(null);
+      updateState();
+    } catch (error) {
+      setError(`Error initializing storage: ${error.message}`);
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(updateState, 100);

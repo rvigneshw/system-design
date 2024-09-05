@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getLastFlushTimestamp, getWALContents, getDiskWALContents, walEventEmitter, getTimeUntilNextFlush } from '../utils/storageEngine';
+import { getWALContents, getDiskWALContents, walEventEmitter, getTimeUntilNextFlush } from '../utils/storageEngine';
 
 function WALComparison() {
   const [memoryWAL, setMemoryWAL] = useState('');
