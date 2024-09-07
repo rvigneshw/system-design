@@ -22,7 +22,7 @@ function App() {
   const topLevelRoutes = Object.keys(components).filter(key => !key.includes('/'));
 
   return (
-    <Router>
+    <Router basename="/system-design">
       <div className="min-h-screen bg-gray-100">
         <nav className="bg-white shadow-md">
           <ul className="flex justify-center space-x-4 p-4">
